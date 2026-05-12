@@ -1,0 +1,33 @@
+name: Flask Build Pipeline
+
+# Trigger: Run this whenever someone pushes to the 'main' branch
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest  # This is the "Runner" (a clean Linux VM)
+
+    steps:
+      # Step 1: Copy the code from GitHub to the Runner
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: |
+          pip install flask
+          # If you had tests, you'd run them here (e.g., pytest)
+
+      # Step 4: Build the Docker Image
+      - name: Build Docker Image
+        run: |
+          docker build -t my-flask-app:${{ github.sha }} .
+          echo "Image built successfully!"
